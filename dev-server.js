@@ -1,13 +1,13 @@
-import { fileURLToPath } from "url";
-import { join, dirname } from "path";
 import { promises as fsPromises } from "fs";
 import http from "http";
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
 
 const { readFile, stat } = fsPromises;
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const dist = join(__dirname, "./dist");
+const dist = join(__dirname, ".");
 
 const extensions = new Map();
 extensions.set(".css", "text/css");
