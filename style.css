@@ -1,0 +1,26 @@
+:root {
+  --color-background: hsl(0 0% 10%);
+  --color-font: hsl(0 0% 85%);
+  --color-debug: magenta;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+@font-face {
+  font-family: "SassyFrass";
+  src: url("font/SassyFrass-Regular.ttf");
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-font);
+  font-family: SassyFrass, cursive;
+  display: flex;
+  flex-direction: column;
+  row-gap: 100px;
+}
