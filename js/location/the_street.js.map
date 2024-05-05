@@ -1,0 +1,1 @@
+{"version":3,"file":"the_street.js","sourceRoot":"","sources":["../../src/location/the_street.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,cAAc,EAAE,MAAM,eAAe,CAAC;AAE/C,MAAM,CAAC,MAAM,eAAe,GAAG,GAAgB,EAAE;IAC/C,OAAO,cAAc,CAAC;QACpB,WAAW,EAAE,0EAA0E;QACvF,IAAI,EAAE,IAAI;KACX,CAAC,CAAC;AACL,CAAC,CAAC"}

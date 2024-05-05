@@ -1,46 +1,68 @@
-import { createTitleScreen } from "./screen/title.js";
+export type LocationName =
+  | "Home Sweet Home"
+  | "Killingsworth"
+  | "Stacks Coffeehouse";
 
-class El extends HTMLElement {
-  #container: HTMLElement;
-  constructor() {
-    super();
+type Visited = Record<LocationName, number>;
+export type Hero = {
+  location: LocationName;
+  visited: Visited;
+};
 
-    this.attachShadow({ mode: "open" });
-    const shadowRoot = this.shadowRoot;
-    if (shadowRoot === null) throw new Error("shadowRoot is null");
+export type State = {
+  hero: Hero;
+};
 
-    const container = document.createElement("div");
-    shadowRoot.appendChild(container);
-    this.#container = container;
-  }
+export type Move = (location: LocationName) => void;
 
-  setContent(content: HTMLElement): true {
-    this.#container.replaceChildren(content);
-    return true;
-  }
-}
+export type Action = {
+  move: Move;
+};
+type ActionType = keyof Action;
 
-customElements.define("ac-game", El);
+type WatchCallback = (state: State) => void;
+type AddWatchCallback = (callback: WatchCallback) => void;
+export type Watch = Record<ActionType, AddWatchCallback>;
 
-type State = "title";
-type ViewMap = Record<State, HTMLElement>;
+export type Game = { action: Action; watch: Watch };
 
-type Factory = () => HTMLElement;
+type Factory = () => Game;
 
 export const createGame: Factory = () => {
-  const container = new El();
-
-  const viewMap: ViewMap = {
-    title: createTitleScreen(),
+  const hero: Hero = {
+    location: "Home Sweet Home",
+    visited: {
+      "Home Sweet Home": 0,
+      Killingsworth: 0,
+      "Stacks Coffeehouse": 0,
+    },
   };
 
-  let state: State = "title";
-  container.setContent(viewMap[state]);
+  const state: State = {
+    hero,
+  };
 
-  // const update = (newState: State) => {
-  //   state = newState;
-  //   el.setContent(viewMap[state]);
-  // };
+  const moveWatchers: WatchCallback[] = [];
+  const watchMove: AddWatchCallback = (callback) => moveWatchers.push(callback);
 
-  return container;
+  const move: Move = (location) => {
+    hero.location = location;
+    hero.visited[location]++;
+    moveWatchers.forEach((watcher) => watcher(state));
+  };
+
+  const action: Action = {
+    move,
+  };
+
+  const watch: Watch = {
+    move: watchMove,
+  };
+
+  const result: Game = {
+    action,
+    watch,
+  };
+
+  return result;
 };

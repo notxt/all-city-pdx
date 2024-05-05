@@ -1,0 +1,1 @@
+{"version":3,"file":"killingsworth.js","sourceRoot":"","sources":["../../src/location/killingsworth.ts"],"names":[],"mappings":"AAEA,MAAM,CAAC,MAAM,mBAAmB,GAAsB,CACpD,iBAAiB,EACJ,EAAE;IACf,OAAO,iBAAiB,CAAC;QACvB,IAAI,EAAE,eAAe;QACrB,WAAW,EACT,0EAA0E;QAC5E,IAAI,EAAE;YACJ;gBACE,WAAW,EAAE,gBAAgB;gBAC7B,QAAQ,EAAE,iBAAiB;aAC5B;SACF;KACF,CAAC,CAAC;AACL,CAAC,CAAC"}

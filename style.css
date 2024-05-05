@@ -1,6 +1,6 @@
 :root {
   --color-background: hsl(0 0% 10%);
-  --color-font: hsl(0 0% 85%);
+  --color-font: hsl(0 0% 80%);
   --color-debug: magenta;
 }
 
@@ -35,7 +35,10 @@ body {
   background-color: var(--color-background);
   color: var(--color-font);
   font-family: "Body Text";
+  letter-spacing: 2px;
+  word-spacing: -8px;
   display: flex;
+  font-size: 30px;
   flex-direction: column;
   row-gap: 100px;
 }
