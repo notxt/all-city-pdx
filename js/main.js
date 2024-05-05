@@ -1,6 +1,6 @@
-import { startGame } from "./game.js";
-const body = document.querySelector("body");
-if (body === null)
-    throw new Error("body is null");
-body.appendChild(startGame());
+import { createGame } from "./game.js";
+const container = document.getElementById("game-container");
+if (container === null)
+    throw new Error("game-container is null");
+container.appendChild(createGame());
 //# sourceMappingURL=main.js.map

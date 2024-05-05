@@ -1,6 +1,6 @@
-import { startGame } from "./game.js";
+import { createGame } from "./game.js";
 
-const body = document.querySelector("body");
-if (body === null) throw new Error("body is null");
+const container = document.getElementById("game-container");
+if (container === null) throw new Error("game-container is null");
 
-body.appendChild(startGame());
+container.appendChild(createGame());

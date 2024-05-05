@@ -12,14 +12,29 @@
 }
 
 @font-face {
-  font-family: "SassyFrass";
+  font-family: "Title Text";
+  src: url("font/SedgwickAveDisplay-Regular.ttf");
+}
+
+@font-face {
+  font-family: "Bold Text";
+  src: url("font/PermanentMarker-Regular.ttf");
+}
+
+@font-face {
+  font-family: "Accent Text";
   src: url("font/SassyFrass-Regular.ttf");
+}
+
+@font-face {
+  font-family: "Body Text";
+  src: url("font/ShadowsIntoLight-Regular.ttf");
 }
 
 body {
   background-color: var(--color-background);
   color: var(--color-font);
-  font-family: SassyFrass, cursive;
+  font-family: "Body Text";
   display: flex;
   flex-direction: column;
   row-gap: 100px;

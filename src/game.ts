@@ -1,13 +1,34 @@
-import { createContainer } from "./container.js";
 import { createTitleScreen } from "./screen/title.js";
+
+class El extends HTMLElement {
+  #container: HTMLElement;
+  constructor() {
+    super();
+
+    this.attachShadow({ mode: "open" });
+    const shadowRoot = this.shadowRoot;
+    if (shadowRoot === null) throw new Error("shadowRoot is null");
+
+    const container = document.createElement("div");
+    shadowRoot.appendChild(container);
+    this.#container = container;
+  }
+
+  setContent(content: HTMLElement): true {
+    this.#container.replaceChildren(content);
+    return true;
+  }
+}
+
+customElements.define("ac-game", El);
 
 type State = "title";
 type ViewMap = Record<State, HTMLElement>;
 
 type Factory = () => HTMLElement;
 
-export const startGame: Factory = () => {
-  const container = createContainer();
+export const createGame: Factory = () => {
+  const container = new El();
 
   const viewMap: ViewMap = {
     title: createTitleScreen(),
