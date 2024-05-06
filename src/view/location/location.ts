@@ -1,13 +1,24 @@
 import { Game, LocationName, State } from "../../game.js";
 import { html } from "../../lib.js";
 
-type CreateGoToButton = (goTo: GoTo) => HTMLLIElement;
+type CreateGoToButton = (state: State, goto: GoTo) => HTMLLIElement;
 const createGoToButtonFactory =
   (game: Game): CreateGoToButton =>
-  (goTo) => {
+  (state, goto) => {
     const button = document.createElement("button");
-    button.textContent = goTo.description;
-    button.onclick = () => game.action.move(goTo.location);
+    const description = goto.description;
+    const visited = state.hero.visited[goto.location];
+
+    if (typeof description === "string") {
+      button.textContent = description;
+    } else {
+      button.textContent =
+        visited >= 1
+          ? description["2 been there"]
+          : description["1 first time"];
+    }
+
+    button.onclick = () => game.action.move(goto.location);
 
     const li = document.createElement("li");
     li.appendChild(button);
@@ -43,6 +54,7 @@ template.innerHTML = html`
   <style>
     * {
       margin: 0;
+      padding: 0;
     }
 
     .container {
@@ -62,40 +74,44 @@ template.innerHTML = html`
       word-spacing: -15px;
     }
 
+    p {
+      max-width: 700px;
+    }
+
     button {
       background-color: inherit;
       border-style: none;
       border: 0;
-      color: hsl(300 100% 50% / 0.7);
+      color: hsl(300 100% 50% / 0.8);
       cursor: pointer;
-      font-family: "Accent Text";
-      font-size: 50px;
+      font-family: inherit;
+      font-size: inherit;
       padding: 0;
     }
 
     li {
       list-style-type: none;
+      text-align: center;
     }
 
     button:focus-visible {
       outline: none;
     }
 
-    button:focus,
-    button:hover {
+    button:focus {
       outline: none;
+    }
+
+    button:hover {
       color: hsl(300 100% 50% / 1);
     }
 
-    button:focus::before,
-    button:hover::before {
-      content: ">> ";
-      font-size: 50px;
+    button:focus::before {
+      content: "> ";
     }
 
-    button:focus::after,
-    button:hover::after {
-      content: " <<";
+    button:focus::after {
+      content: " <";
     }
   </style>
 
@@ -144,19 +160,20 @@ class El extends HTMLElement implements LocationEl {
 
 customElements.define("ac-location", El);
 
+type Description = {
+  "1 first time": string;
+  "2 been there": string;
+};
+
 export type GoTo = {
   location: LocationName;
-  description: string;
+  description: Description | string;
 };
 
 export type LocationConfig = {
   name: LocationName;
   regularThreshold: number;
-  description: {
-    "1 first time": string;
-    "2 been there": string;
-    "3 regular": string;
-  };
+  description: Description;
   goTo: GoTo[];
 };
 
@@ -183,13 +200,9 @@ export const createLocationFactory: Factory = (state) => (config) => {
     const description = config.description;
 
     el.description =
-      visited > config.regularThreshold
-        ? description["3 regular"]
-        : visited > 1
-        ? description["2 been there"]
-        : description["1 first time"];
+      visited > 1 ? description["2 been there"] : description["1 first time"];
 
-    el.actionList = config.goTo.map((goto) => createGoToButton(goto));
+    el.actionList = config.goTo.map((goto) => createGoToButton(state, goto));
   };
 
   const result: LocationView = {

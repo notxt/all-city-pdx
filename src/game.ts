@@ -1,4 +1,5 @@
 export type LocationName =
+  | "Gilded Raccoon"
   | "Home Sweet Home"
   | "Killingsworth"
   | "Stacks Coffeehouse";
@@ -32,9 +33,10 @@ export const createGame: Factory = () => {
   const hero: Hero = {
     location: "Home Sweet Home",
     visited: {
+      "Gilded Raccoon": 0,
       "Home Sweet Home": 0,
-      Killingsworth: 0,
       "Stacks Coffeehouse": 0,
+      Killingsworth: 0,
     },
   };
 

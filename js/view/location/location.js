@@ -11,10 +11,20 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 };
 var _El_action, _El_description;
 import { html } from "../../lib.js";
-const createGoToButtonFactory = (game) => (goTo) => {
+const createGoToButtonFactory = (game) => (state, goto) => {
     const button = document.createElement("button");
-    button.textContent = goTo.description;
-    button.onclick = () => game.action.move(goTo.location);
+    const description = goto.description;
+    const visited = state.hero.visited[goto.location];
+    if (typeof description === "string") {
+        button.textContent = description;
+    }
+    else {
+        button.textContent =
+            visited >= 1
+                ? description["2 been there"]
+                : description["1 first time"];
+    }
+    button.onclick = () => game.action.move(goto.location);
     const li = document.createElement("li");
     li.appendChild(button);
     return li;
@@ -38,6 +48,7 @@ template.innerHTML = html `
   <style>
     * {
       margin: 0;
+      padding: 0;
     }
 
     .container {
@@ -57,40 +68,44 @@ template.innerHTML = html `
       word-spacing: -15px;
     }
 
+    p {
+      max-width: 700px;
+    }
+
     button {
       background-color: inherit;
       border-style: none;
       border: 0;
-      color: hsl(300 100% 50% / 0.7);
+      color: hsl(300 100% 50% / 0.8);
       cursor: pointer;
-      font-family: "Accent Text";
-      font-size: 50px;
+      font-family: inherit;
+      font-size: inherit;
       padding: 0;
     }
 
     li {
       list-style-type: none;
+      text-align: center;
     }
 
     button:focus-visible {
       outline: none;
     }
 
-    button:focus,
-    button:hover {
+    button:focus {
       outline: none;
+    }
+
+    button:hover {
       color: hsl(300 100% 50% / 1);
     }
 
-    button:focus::before,
-    button:hover::before {
-      content: ">> ";
-      font-size: 50px;
+    button:focus::before {
+      content: "> ";
     }
 
-    button:focus::after,
-    button:hover::after {
-      content: " <<";
+    button:focus::after {
+      content: " <";
     }
   </style>
 
@@ -134,12 +149,8 @@ export const createLocationFactory = (state) => (config) => {
         const visited = state.hero.visited[name];
         const description = config.description;
         el.description =
-            visited > config.regularThreshold
-                ? description["3 regular"]
-                : visited > 1
-                    ? description["2 been there"]
-                    : description["1 first time"];
-        el.actionList = config.goTo.map((goto) => createGoToButton(goto));
+            visited > 1 ? description["2 been there"] : description["1 first time"];
+        el.actionList = config.goTo.map((goto) => createGoToButton(state, goto));
     };
     const result = {
         el,

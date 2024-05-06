@@ -5,13 +5,13 @@ export const stacksConfig: LocationConfig = {
   regularThreshold: 3,
   description: {
     "1 first time":
-      "Your cozy little corner of the world. The rent's a little steep but worth it for a slice of backyard and somewhere to practice your throwies.",
-    "2 been there": "Back at home. What now?",
-    "3 regular": "Starting to get sick of this place.",
+      "Bookshelves line the walls and the baristas crack jokes in behind the counter. Clearly a local favorite.",
+    "2 been there":
+      "My mouth starts watering as soon as smell of that Roseline blend hits my nostrils",
   },
   goTo: [
     {
-      description: "Open the door and walk outside",
+      description: "Time to get going",
       location: "Killingsworth",
     },
   ],

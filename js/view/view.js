@@ -10,6 +10,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
 var _El_container;
+import { gildedRaccoonConfig } from "./location/gildedRaccoon.js";
 import { homeConfig } from "./location/home.js";
 import { killingsworthConfig } from "./location/killingsworth.js";
 import { createLocationFactory } from "./location/location.js";
@@ -37,9 +38,10 @@ export const createView = (game) => {
     const el = new El();
     const createLocation = createLocationFactory(game);
     const locationMap = {
+        "Gilded Raccoon": createLocation(gildedRaccoonConfig),
         "Home Sweet Home": createLocation(homeConfig),
-        Killingsworth: createLocation(killingsworthConfig),
         "Stacks Coffeehouse": createLocation(stacksConfig),
+        Killingsworth: createLocation(killingsworthConfig),
     };
     game.watch.move((state) => {
         const view = locationMap[state.hero.location];

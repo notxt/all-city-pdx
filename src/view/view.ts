@@ -1,4 +1,5 @@
 import { Game, LocationName } from "../game.js";
+import { gildedRaccoonConfig } from "./location/gildedRaccoon.js";
 import { homeConfig } from "./location/home.js";
 import { killingsworthConfig } from "./location/killingsworth.js";
 import { LocationView, createLocationFactory } from "./location/location.js";
@@ -36,9 +37,10 @@ export const createView: Factory = (game) => {
   const createLocation = createLocationFactory(game);
 
   const locationMap: LocationMap = {
+    "Gilded Raccoon": createLocation(gildedRaccoonConfig),
     "Home Sweet Home": createLocation(homeConfig),
-    Killingsworth: createLocation(killingsworthConfig),
     "Stacks Coffeehouse": createLocation(stacksConfig),
+    Killingsworth: createLocation(killingsworthConfig),
   };
 
   game.watch.move((state) => {

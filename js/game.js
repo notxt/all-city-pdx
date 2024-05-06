@@ -2,9 +2,10 @@ export const createGame = () => {
     const hero = {
         location: "Home Sweet Home",
         visited: {
+            "Gilded Raccoon": 0,
             "Home Sweet Home": 0,
-            Killingsworth: 0,
             "Stacks Coffeehouse": 0,
+            Killingsworth: 0,
         },
     };
     const state = {
