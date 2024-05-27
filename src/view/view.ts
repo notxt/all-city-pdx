@@ -1,15 +1,11 @@
-import { Game, Place } from "../game.js";
 import { getElementByIdFactory, html, querySelectorFactory } from "../lib.js";
-import { gildedRaccoonConfig } from "../place/gildedRaccoon.js";
-import { homeConfig } from "../place/home.js";
-import { killingsworthConfig } from "../place/killingsworth.js";
-import { stacksConfig } from "../place/stacks.js";
-import { createLocationFactory } from "./place.js";
-import { createStuff } from "./thing.js";
+import { State, Verb } from "../state.js";
+import { createPlaceFactory } from "./place.js";
+import { createPocketFactory } from "./pocket.js";
 
 const template = document.createElement("template");
 
-const bagId = "bag";
+const pocketId = "pocket";
 const placeId = "place";
 
 template.innerHTML = html`
@@ -41,15 +37,16 @@ template.innerHTML = html`
   <div class="container">
     <div></div>
     <div id="${placeId}"></div>
-    <div id="${bagId}"></div>
+    <div id="${pocketId}"></div>
   </div>
 `;
 
 class El extends HTMLElement {
   #heading: HTMLHeadingElement;
   #place: HTMLElement;
+  #pocket: HTMLElement;
 
-  constructor({ bag }: { bag: HTMLElement }) {
+  constructor() {
     super();
 
     this.attachShadow({ mode: "open" });
@@ -60,10 +57,9 @@ class El extends HTMLElement {
     const getElementById = getElementByIdFactory(shadow);
     const querySelector = querySelectorFactory(shadow);
 
-    getElementById(bagId).appendChild(bag);
-
-    this.#place = getElementById(placeId);
     this.#heading = querySelector("h1");
+    this.#place = getElementById(placeId);
+    this.#pocket = getElementById(pocketId);
   }
 
   set heading(heading: string) {
@@ -73,32 +69,33 @@ class El extends HTMLElement {
   set place(place: HTMLElement) {
     this.#place.replaceChildren(place);
   }
+
+  set pocket(pocket: HTMLElement) {
+    this.#pocket.replaceChildren(pocket);
+  }
 }
 
 customElements.define("ac-view", El);
 
-type PlaceMap = Record<Place, HTMLElement>;
+export type CreateView = (state: State) => HTMLElement;
+type Factory = (verb: Verb) => CreateView;
 
-type Factory = (game: Game) => HTMLElement;
+export const createViewFactory: Factory = (verb) => {
+  const el = new El();
 
-export const createView: Factory = (game) => {
-  const bag = createStuff(game);
+  const createPocket = createPocketFactory();
+  const createPlace = createPlaceFactory(verb);
 
-  const el = new El({ bag });
+  const result: CreateView = (state) => {
+    const pocket = createPocket(state);
+    el.pocket = pocket;
 
-  const createLocation = createLocationFactory(game);
+    el.heading = state.hero.placeAt;
 
-  const placeMap: PlaceMap = {
-    "Gilded Raccoon": createLocation(gildedRaccoonConfig),
-    "Home Sweet Home": createLocation(homeConfig),
-    "Stacks Coffeehouse": createLocation(stacksConfig),
-    Killingsworth: createLocation(killingsworthConfig),
+    el.place = createPlace(state);
+
+    return el;
   };
 
-  game.watch((state) => {
-    el.heading = state.hero.placeAt;
-    el.place = placeMap[state.hero.placeAt];
-  });
-
-  return el;
+  return result;
 };

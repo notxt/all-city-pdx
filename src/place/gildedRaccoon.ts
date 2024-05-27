@@ -1,22 +1,21 @@
-import { PlaceConfig } from "../view/place.js";
+import { PlaceConfig } from "../state.js";
 
 export const gildedRaccoonConfig: PlaceConfig = {
   name: "Gilded Raccoon",
-  label: {
-    "1 first time": "Neon signs and taxidermy. This place is rad.",
-    "2 been there":
-      "Live music gets the creative juices flowing ... fermented grape juice doesn't hurt either.",
-  },
+  label: "Neon signs and taxidermy. This place is rad.",
+  tagged: null,
   verb: {
     grab: [],
     move: [
       {
-        label: {
-          "1 first time": "Back into the rain",
-          "2 been there": "Back into the rain",
-        },
+        label: "Back into the rain",
         name: "Killingsworth",
       },
     ],
+    tag: {
+      label: "Slap up a sticker on the corner of the booth.",
+      requires: "Stickers",
+      hint: "Bit intimate to pull out a marker. If I had some stickers I could probably get one up.",
+    },
   },
 };

@@ -9,16 +9,12 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _El_heading, _El_place;
+var _El_heading, _El_place, _El_pocket;
 import { getElementByIdFactory, html, querySelectorFactory } from "../lib.js";
-import { gildedRaccoonConfig } from "../place/gildedRaccoon.js";
-import { homeConfig } from "../place/home.js";
-import { killingsworthConfig } from "../place/killingsworth.js";
-import { stacksConfig } from "../place/stacks.js";
-import { createLocationFactory } from "./place.js";
-import { createStuff } from "./thing.js";
+import { createPlaceFactory } from "./place.js";
+import { createPocketFactory } from "./pocket.js";
 const template = document.createElement("template");
-const bagId = "bag";
+const pocketId = "pocket";
 const placeId = "place";
 template.innerHTML = html `
   <style>
@@ -49,14 +45,15 @@ template.innerHTML = html `
   <div class="container">
     <div></div>
     <div id="${placeId}"></div>
-    <div id="${bagId}"></div>
+    <div id="${pocketId}"></div>
   </div>
 `;
 class El extends HTMLElement {
-    constructor({ bag }) {
+    constructor() {
         super();
         _El_heading.set(this, void 0);
         _El_place.set(this, void 0);
+        _El_pocket.set(this, void 0);
         this.attachShadow({ mode: "open" });
         const shadow = this.shadowRoot;
         if (shadow === null)
@@ -64,9 +61,9 @@ class El extends HTMLElement {
         shadow.appendChild(template.content.cloneNode(true));
         const getElementById = getElementByIdFactory(shadow);
         const querySelector = querySelectorFactory(shadow);
-        getElementById(bagId).appendChild(bag);
-        __classPrivateFieldSet(this, _El_place, getElementById(placeId), "f");
         __classPrivateFieldSet(this, _El_heading, querySelector("h1"), "f");
+        __classPrivateFieldSet(this, _El_place, getElementById(placeId), "f");
+        __classPrivateFieldSet(this, _El_pocket, getElementById(pocketId), "f");
     }
     set heading(heading) {
         __classPrivateFieldGet(this, _El_heading, "f").textContent = heading;
@@ -74,23 +71,23 @@ class El extends HTMLElement {
     set place(place) {
         __classPrivateFieldGet(this, _El_place, "f").replaceChildren(place);
     }
+    set pocket(pocket) {
+        __classPrivateFieldGet(this, _El_pocket, "f").replaceChildren(pocket);
+    }
 }
-_El_heading = new WeakMap(), _El_place = new WeakMap();
+_El_heading = new WeakMap(), _El_place = new WeakMap(), _El_pocket = new WeakMap();
 customElements.define("ac-view", El);
-export const createView = (game) => {
-    const bag = createStuff(game);
-    const el = new El({ bag });
-    const createLocation = createLocationFactory(game);
-    const placeMap = {
-        "Gilded Raccoon": createLocation(gildedRaccoonConfig),
-        "Home Sweet Home": createLocation(homeConfig),
-        "Stacks Coffeehouse": createLocation(stacksConfig),
-        Killingsworth: createLocation(killingsworthConfig),
-    };
-    game.watch((state) => {
+export const createViewFactory = (verb) => {
+    const el = new El();
+    const createPocket = createPocketFactory();
+    const createPlace = createPlaceFactory(verb);
+    const result = (state) => {
+        const pocket = createPocket(state);
+        el.pocket = pocket;
         el.heading = state.hero.placeAt;
-        el.place = placeMap[state.hero.placeAt];
-    });
-    return el;
+        el.place = createPlace(state);
+        return el;
+    };
+    return result;
 };
 //# sourceMappingURL=view.js.map

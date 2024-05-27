@@ -1,13 +1,10 @@
-import { PlaceConfig } from "../view/place.js";
+import { PlaceConfig } from "../state.js";
 
 export const stacksConfig: PlaceConfig = {
   name: "Stacks Coffeehouse",
-  label: {
-    "1 first time":
-      "Bookshelves line the walls and the baristas crack jokes in behind the counter. Clearly a local favorite.",
-    "2 been there":
-      "My mouth starts watering as soon as smell of that Roseline blend hits my nostrils",
-  },
+  label:
+    "Bookshelves line the walls and the baristas crack jokes in behind the counter. Clearly a local favorite.",
+  tagged: null,
   verb: {
     grab: [],
     move: [
@@ -16,5 +13,10 @@ export const stacksConfig: PlaceConfig = {
         name: "Killingsworth",
       },
     ],
+    tag: {
+      requires: "Sharpie",
+      label: "Grab the restroom key and scribble some letters",
+      hint: "Restroom key is on the end of a block of wood ... if only I had something to write with.",
+    },
   },
 };

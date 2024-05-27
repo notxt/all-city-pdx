@@ -1,5 +1,5 @@
-import { Game, Thing } from "../game.js";
 import { getElementByIdFactory, html } from "../lib.js";
+import { CreateView } from "./view.js";
 
 const template = document.createElement("template");
 const listId = "list";
@@ -55,23 +55,25 @@ class El extends HTMLElement {
     this.#list = list;
   }
 
-  set things(things: Thing[]) {
-    this.#list.replaceChildren(...things.map(createLi));
+  set things(things: HTMLLIElement[]) {
+    this.#list.replaceChildren(...things);
   }
 }
 
 customElements.define("ac-bag", El);
 
-type Factory = (game: Game) => HTMLElement;
+type Factory = () => CreateView;
 
-export const createStuff: Factory = (game) => {
+export const createPocketFactory: Factory = () => {
   const bag = new El();
 
-  game.watch((state) => {
-    bag.things = state.hero.things;
-  });
+  const result: CreateView = (state) => {
+    bag.things = state.hero.things.map(createLi);
 
-  return bag;
+    return bag;
+  };
+
+  return result;
 };
 
 const createLi = (itemName: string): HTMLLIElement => {

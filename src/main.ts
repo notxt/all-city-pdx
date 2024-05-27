@@ -1,12 +1,16 @@
-import { Place, createGame } from "./game.js";
-import { createView } from "./view/view.js";
+import { Place, createState } from "./state.js";
+import { createViewFactory } from "./view/view.js";
 
 const body = document.querySelector("body");
 if (body === null) throw new Error("body is null");
 
-const game = createGame();
+const { watch, verb } = createState();
 
-body.appendChild(createView(game));
+const createView = createViewFactory(verb);
+
+watch((state) => {
+  body.replaceChildren(createView(state));
+});
 
 const startLocation: Place = "Home Sweet Home";
-game.verb.move(startLocation);
+verb.move(startLocation);

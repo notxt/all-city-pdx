@@ -1,20 +1,33 @@
+import { gildedRaccoonConfig } from "./place/gildedRaccoon.js";
+import { homeConfig } from "./place/home.js";
+import { killingsworthConfig } from "./place/killingsworth.js";
+import { stacksConfig } from "./place/stacks.js";
 export const createGame = () => {
     const hero = {
         placeAt: "Home Sweet Home",
         place: {
-            "Gilded Raccoon": { tag: false, visited: false },
-            "Home Sweet Home": { tag: false, visited: false },
-            "Stacks Coffeehouse": { tag: false, visited: false },
-            Killingsworth: { tag: false, visited: false },
+            "Gilded Raccoon": 0,
+            "Home Sweet Home": 0,
+            "Stacks Coffeehouse": 0,
+            Killingsworth: 0,
         },
         rep: 0,
         skill: {
             Sharpie: 0,
+            Stickers: 0,
+            Mop: 0,
         },
         things: [],
     };
+    const placeMap = {
+        "Gilded Raccoon": gildedRaccoonConfig,
+        "Home Sweet Home": homeConfig,
+        "Stacks Coffeehouse": stacksConfig,
+        Killingsworth: killingsworthConfig,
+    };
     const state = {
         hero,
+        place: placeMap,
     };
     const update = () => watchList.forEach((watcher) => watcher(state));
     const grab = (item) => {
@@ -23,13 +36,13 @@ export const createGame = () => {
         hero.things.push(item);
         update();
     };
-    const move = (location) => {
-        hero.placeAt = location;
-        hero.place[location].visited = true;
+    const move = (place) => {
+        hero.placeAt = place;
+        hero.place[place]++;
         update();
     };
     const tag = ({ place, marker }) => {
-        hero.place[place].tag = true;
+        placeMap[place].tagged = "Me";
         hero.skill[marker]++;
         update();
     };

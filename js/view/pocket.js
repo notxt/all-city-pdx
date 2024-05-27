@@ -65,7 +65,7 @@ class El extends HTMLElement {
 }
 _El_list = new WeakMap();
 customElements.define("ac-bag", El);
-export const createStuff = () => {
+export const createPocketFactory = () => {
     const bag = new El();
     const result = (state) => {
         bag.things = state.hero.things.map(createLi);
@@ -78,4 +78,4 @@ const createLi = (itemName) => {
     li.textContent = itemName;
     return li;
 };
-//# sourceMappingURL=thing.js.map
+//# sourceMappingURL=pocket.js.map

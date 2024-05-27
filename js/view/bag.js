@@ -15,11 +15,6 @@ const template = document.createElement("template");
 const listId = "list";
 template.innerHTML = html `
   <style>
-    :host {
-      --font-family: "Accent Text";
-      --font-size: 50px;
-    }
-
     * {
       margin: 0;
       padding-inline-start: 0;
@@ -30,8 +25,8 @@ template.innerHTML = html `
     }
 
     h2 {
-      font-family: var(--font-family);
-      font-size: var(--font-size);
+      font-family: var(--font-accent);
+      font-size: 50px;
       font-weight: normal;
     }
 
@@ -40,13 +35,12 @@ template.innerHTML = html `
     }
 
     li {
-      font-family: var(--font-family);
       font-size: var(--font-size);
     }
   </style>
 
   <div class="container">
-    <h2>(Pockets)</h2>
+    <h2>Pocket</h2>
     <ul id="${listId}"></ul>
   </div>
 `;
@@ -65,18 +59,19 @@ class El extends HTMLElement {
             throw new Error(`${listId} is not an instance of HTMLUListElement`);
         __classPrivateFieldSet(this, _El_list, list, "f");
     }
-    set items(items) {
-        __classPrivateFieldGet(this, _El_list, "f").replaceChildren(...items);
+    set things(things) {
+        __classPrivateFieldGet(this, _El_list, "f").replaceChildren(...things);
     }
 }
 _El_list = new WeakMap();
 customElements.define("ac-bag", El);
-export const createBag = (game) => {
+export const createBag = () => {
     const bag = new El();
-    game.watch((state) => {
-        bag.items = state.hero.stuff.map(createLi);
-    });
-    return bag;
+    const result = (state) => {
+        bag.things = state.hero.things.map(createLi);
+        return bag;
+    };
+    return result;
 };
 const createLi = (itemName) => {
     const li = document.createElement("li");

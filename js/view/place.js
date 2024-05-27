@@ -98,57 +98,41 @@ class El extends HTMLElement {
 }
 _El_action = new WeakMap(), _El_description = new WeakMap();
 customElements.define("ac-location", El);
-export const createLocationFactory = (game) => (config) => {
+export const createPlaceFactory = (verb) => {
     const el = new El();
-    const placeLabel = placeLabelFactory(config);
-    const createItemActionList = createItemActionFactory({
-        actions: config.verb.grab,
-        game,
-    });
-    const createMoveActionList = config.verb.move.map(createMoveFactory(game));
-    const watch = (state) => {
-        el.description = placeLabel(state);
-        const moveActionList = createMoveActionList.map((create) => actionLi(create(state)));
-        const itemActionList = createItemActionList(state).map(actionLi);
-        el.actionList = [...moveActionList, ...itemActionList];
-    };
-    game.watch(watch);
-    return el;
-};
-const placeLabelFactory = (place) => {
-    const { label: description } = place;
-    return (state) => {
-        if (typeof description === "string") {
-            return description;
-        }
-        return state.hero.place[place.name]
-            ? description["2 been there"]
-            : description["1 first time"];
-    };
-};
-const createMoveFactory = (game) => (location) => {
-    const placeLabel = placeLabelFactory(location);
-    return (state) => {
-        const label = placeLabel(state);
-        const result = {
-            description: label,
-            callback: () => game.verb.move(location.name),
-        };
-        return result;
-    };
-};
-const createItemActionFactory = ({ actions, game, }) => {
-    return (state) => {
-        const result = [];
-        for (const action of actions) {
-            if (state.hero.things.includes(action.name))
+    const createMove = createMoveFactory(verb);
+    const createGrab = createGrabFactory(verb);
+    const result = (state) => {
+        const at = state.hero.placeAt;
+        const config = state.place[at];
+        el.description = config.label;
+        const grabActions = [];
+        for (const grab of config.verb.grab) {
+            if (state.hero.things.includes(grab.name))
                 continue;
-            const { label: description, name: item } = action;
-            result.push({
-                description,
-                callback: () => game.verb.grab(item),
-            });
+            grabActions.push(createGrab(grab));
         }
+        const moveActions = config.verb.move.map(createMove);
+        const actions = [...grabActions, ...moveActions];
+        el.actionList = actions.map(actionLi);
+        return el;
+    };
+    return result;
+};
+const createMoveFactory = (verb) => (place) => {
+    const label = place.label;
+    const result = {
+        description: label,
+        callback: () => verb.move(place.name),
+    };
+    return result;
+};
+const createGrabFactory = (verb) => {
+    return (item) => {
+        const result = {
+            description: item.label,
+            callback: () => verb.grab(item.name),
+        };
         return result;
     };
 };

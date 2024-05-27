@@ -1,12 +1,10 @@
-import { PlaceConfig } from "../view/place.js";
+import { PlaceConfig } from "../state.js";
 
 export const homeConfig: PlaceConfig = {
   name: "Home Sweet Home",
-  label: {
-    "1 first time":
-      "Your cozy little corner of the world. The rent's a little steep but worth it.",
-    "2 been there": "Back at home. Now what?",
-  },
+  label:
+    "Your cozy little corner of the world. The rent's a little steep but worth it.",
+  tagged: "Me",
   verb: {
     grab: [
       {
@@ -16,13 +14,14 @@ export const homeConfig: PlaceConfig = {
     ],
     move: [
       {
-        label: {
-          "1 first time": "Time to go explore.",
-          "2 been there": "Wonder what's going on outside",
-        },
+        label: "Time to go explore.",
         name: "Killingsworth",
       },
     ],
-    tag: [],
+    tag: {
+      label: "I should hit the black book and practice some P's",
+      requires: "Sharpie",
+      hint: "Been sec since I drew in the book. Need to grab a marker first though.",
+    },
   },
 };
