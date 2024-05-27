@@ -10,37 +10,14 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
 var _El_action, _El_description;
-import { html } from "../../lib.js";
-const createGoToButtonFactory = (game) => (state, goto) => {
+import { getElementByIdFactory, html, querySelectorFactory, } from "../../lib.js";
+const actionLi = (action) => {
     const button = document.createElement("button");
-    const description = goto.description;
-    const visited = state.hero.visited[goto.location];
-    if (typeof description === "string") {
-        button.textContent = description;
-    }
-    else {
-        button.textContent =
-            visited >= 1
-                ? description["2 been there"]
-                : description["1 first time"];
-    }
-    button.onclick = () => game.action.move(goto.location);
+    button.textContent = action.description;
+    button.onclick = () => action.callback();
     const li = document.createElement("li");
     li.appendChild(button);
     return li;
-};
-const getElementByIdFactory = (shadow) => (id) => {
-    const el = shadow.getElementById(id);
-    if (el === null)
-        throw new Error(`#${id} is null`);
-    return el;
-};
-const querySelectorFactory = (shadow) => (selector) => {
-    // const test = shadow.querySelector("h1")
-    const el = shadow.querySelector(selector);
-    if (el === null)
-        throw new Error(`${selector} is null`);
-    return el;
 };
 const descriptionId = "description";
 const template = document.createElement("template");
@@ -52,11 +29,7 @@ template.innerHTML = html `
     }
 
     .container {
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
+      text-align: center;
     }
 
     h1 {
@@ -76,7 +49,7 @@ template.innerHTML = html `
       background-color: inherit;
       border-style: none;
       border: 0;
-      color: hsl(300 100% 50% / 0.8);
+      color: var(--color-debug);
       cursor: pointer;
       font-family: inherit;
       font-size: inherit;
@@ -141,21 +114,56 @@ class El extends HTMLElement {
 }
 _El_action = new WeakMap(), _El_description = new WeakMap();
 customElements.define("ac-location", El);
-export const createLocationFactory = (state) => (config) => {
-    const createGoToButton = createGoToButtonFactory(state);
+export const createLocationFactory = (game) => (config) => {
     const el = new El(config.name);
-    const update = (state) => {
-        const name = state.hero.location;
-        const visited = state.hero.visited[name];
-        const description = config.description;
-        el.description =
-            visited > 1 ? description["2 been there"] : description["1 first time"];
-        el.actionList = config.goTo.map((goto) => createGoToButton(state, goto));
+    const createItemActionList = createItemActionFactory({
+        actions: config.actions.item,
+        game,
+    });
+    const createMoveActionList = config.actions.move.map(createMoveActionFactory(game));
+    const watch = (state) => {
+        const moveActionList = createMoveActionList.map((create) => actionLi(create(state)));
+        const itemActionList = createItemActionList(state).map(actionLi);
+        el.actionList = [...moveActionList, ...itemActionList];
     };
-    const result = {
-        el,
-        update,
+    game.watch(watch);
+    return el;
+};
+const getMoveLabelFactory = (move) => {
+    const { description } = move;
+    return (state) => {
+        if (typeof description === "string") {
+            return description;
+        }
+        return state.hero.visited[move.location] >= 1
+            ? description["2 been there"]
+            : description["1 first time"];
     };
-    return result;
+};
+const createMoveActionFactory = (game) => (action) => {
+    const getMoveLabel = getMoveLabelFactory(action);
+    return (state) => {
+        const description = getMoveLabel(state);
+        const result = {
+            description,
+            callback: () => game.action.move(action.location),
+        };
+        return result;
+    };
+};
+const createItemActionFactory = ({ actions, game, }) => {
+    return (state) => {
+        const result = [];
+        for (const action of actions) {
+            if (state.hero.bag.includes(action.item))
+                continue;
+            const { description, item } = action;
+            result.push({
+                description,
+                callback: () => game.action.grab(item),
+            });
+        }
+        return result;
+    };
 };
 //# sourceMappingURL=location.js.map

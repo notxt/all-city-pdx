@@ -11,14 +11,6 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 };
 var _El_action, _El_description;
 import { getElementByIdFactory, html, querySelectorFactory } from "../lib.js";
-const actionLi = (action) => {
-    const button = document.createElement("button");
-    button.textContent = action.description;
-    button.onclick = () => action.callback();
-    const li = document.createElement("li");
-    li.appendChild(button);
-    return li;
-};
 const descriptionId = "description";
 const template = document.createElement("template");
 template.innerHTML = html `
@@ -30,15 +22,6 @@ template.innerHTML = html `
 
     .container {
       text-align: center;
-    }
-
-    h1 {
-      color: hsl(0 0 0 / 0);
-      font-family: "Title Text";
-      font-size: 120px;
-      letter-spacing: -6px;
-      text-shadow: hsl(180 100% 50% / 0.8) 0 0 2px;
-      word-spacing: -15px;
     }
 
     p {
@@ -89,7 +72,7 @@ template.innerHTML = html `
   </div>
 `;
 class El extends HTMLElement {
-    constructor(title) {
+    constructor() {
         super();
         _El_action.set(this, void 0);
         _El_description.set(this, void 0);
@@ -100,8 +83,6 @@ class El extends HTMLElement {
         shadow.appendChild(template.content.cloneNode(true));
         const querySelector = querySelectorFactory(shadow);
         const getElementById = getElementByIdFactory(shadow);
-        const titleEl = querySelector("h1");
-        titleEl.textContent = title;
         __classPrivateFieldSet(this, _El_description, getElementById(descriptionId), "f");
         __classPrivateFieldSet(this, _El_action, querySelector("ul"), "f");
     }
@@ -109,13 +90,14 @@ class El extends HTMLElement {
         __classPrivateFieldGet(this, _El_action, "f").replaceChildren(...actionList);
     }
     set description(description) {
+        console.log(description);
         __classPrivateFieldGet(this, _El_description, "f").textContent = description;
     }
 }
 _El_action = new WeakMap(), _El_description = new WeakMap();
 customElements.define("ac-location", El);
 export const createLocationFactory = (game) => (config) => {
-    const el = new El(config.name);
+    const el = new El();
     const createItemActionList = createItemActionFactory({
         actions: config.actions.item,
         game,
@@ -129,24 +111,24 @@ export const createLocationFactory = (game) => (config) => {
     game.watch(watch);
     return el;
 };
-const getMoveLabelFactory = (move) => {
-    const { description } = move;
+const getLocationLabel = (location) => {
+    const { description } = location;
     return (state) => {
         if (typeof description === "string") {
             return description;
         }
-        return state.hero.visited[move.location] >= 1
+        return state.hero.visited[location.name] >= 1
             ? description["2 been there"]
             : description["1 first time"];
     };
 };
 const createMoveActionFactory = (game) => (action) => {
-    const getMoveLabel = getMoveLabelFactory(action);
+    const getMoveLabel = getLocationLabel(action);
     return (state) => {
         const description = getMoveLabel(state);
         const result = {
             description,
-            callback: () => game.action.move(action.location),
+            callback: () => game.action.move(action.name),
         };
         return result;
     };
@@ -165,5 +147,13 @@ const createItemActionFactory = ({ actions, game, }) => {
         }
         return result;
     };
+};
+const actionLi = (action) => {
+    const button = document.createElement("button");
+    button.textContent = action.description;
+    button.onclick = () => action.callback();
+    const li = document.createElement("li");
+    li.appendChild(button);
+    return li;
 };
 //# sourceMappingURL=location.js.map

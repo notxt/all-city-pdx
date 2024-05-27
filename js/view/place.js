@@ -11,14 +11,6 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 };
 var _El_action, _El_description;
 import { getElementByIdFactory, html, querySelectorFactory } from "../lib.js";
-const actionLi = (action) => {
-    const button = document.createElement("button");
-    button.textContent = action.description;
-    button.onclick = () => action.callback();
-    const li = document.createElement("li");
-    li.appendChild(button);
-    return li;
-};
 const descriptionId = "description";
 const template = document.createElement("template");
 template.innerHTML = html `
@@ -32,15 +24,6 @@ template.innerHTML = html `
       text-align: center;
     }
 
-    h1 {
-      color: hsl(0 0 0 / 0);
-      font-family: "Title Text";
-      font-size: 120px;
-      letter-spacing: -6px;
-      text-shadow: hsl(180 100% 50% / 0.8) 0 0 2px;
-      word-spacing: -15px;
-    }
-
     p {
       max-width: 700px;
     }
@@ -49,7 +32,7 @@ template.innerHTML = html `
       background-color: inherit;
       border-style: none;
       border: 0;
-      color: var(--color-debug);
+      color: magenta;
       cursor: pointer;
       font-family: inherit;
       font-size: inherit;
@@ -73,10 +56,12 @@ template.innerHTML = html `
       color: hsl(300 100% 50% / 1);
     }
 
+    button:hover::before,
     button:focus::before {
       content: "> ";
     }
 
+    button:hover::after,
     button:focus::after {
       content: " <";
     }
@@ -89,7 +74,7 @@ template.innerHTML = html `
   </div>
 `;
 class El extends HTMLElement {
-    constructor(title) {
+    constructor() {
         super();
         _El_action.set(this, void 0);
         _El_description.set(this, void 0);
@@ -100,8 +85,6 @@ class El extends HTMLElement {
         shadow.appendChild(template.content.cloneNode(true));
         const querySelector = querySelectorFactory(shadow);
         const getElementById = getElementByIdFactory(shadow);
-        const titleEl = querySelector("h1");
-        titleEl.textContent = title;
         __classPrivateFieldSet(this, _El_description, getElementById(descriptionId), "f");
         __classPrivateFieldSet(this, _El_action, querySelector("ul"), "f");
     }
@@ -109,19 +92,22 @@ class El extends HTMLElement {
         __classPrivateFieldGet(this, _El_action, "f").replaceChildren(...actionList);
     }
     set description(description) {
+        console.log(description);
         __classPrivateFieldGet(this, _El_description, "f").textContent = description;
     }
 }
 _El_action = new WeakMap(), _El_description = new WeakMap();
 customElements.define("ac-location", El);
 export const createLocationFactory = (game) => (config) => {
-    const el = new El(config.name);
+    const el = new El();
+    const placeLabel = placeLabelFactory(config);
     const createItemActionList = createItemActionFactory({
-        actions: config.actions.item,
+        actions: config.verb.grab,
         game,
     });
-    const createMoveActionList = config.actions.move.map(createMoveActionFactory(game));
+    const createMoveActionList = config.verb.move.map(createMoveFactory(game));
     const watch = (state) => {
+        el.description = placeLabel(state);
         const moveActionList = createMoveActionList.map((create) => actionLi(create(state)));
         const itemActionList = createItemActionList(state).map(actionLi);
         el.actionList = [...moveActionList, ...itemActionList];
@@ -129,24 +115,24 @@ export const createLocationFactory = (game) => (config) => {
     game.watch(watch);
     return el;
 };
-const getMoveLabelFactory = (move) => {
-    const { description } = move;
+const placeLabelFactory = (place) => {
+    const { label: description } = place;
     return (state) => {
         if (typeof description === "string") {
             return description;
         }
-        return state.hero.visited[move.location] >= 1
+        return state.hero.place[place.name]
             ? description["2 been there"]
             : description["1 first time"];
     };
 };
-const createMoveActionFactory = (game) => (action) => {
-    const getMoveLabel = getMoveLabelFactory(action);
+const createMoveFactory = (game) => (location) => {
+    const placeLabel = placeLabelFactory(location);
     return (state) => {
-        const description = getMoveLabel(state);
+        const label = placeLabel(state);
         const result = {
-            description,
-            callback: () => game.action.move(action.location),
+            description: label,
+            callback: () => game.verb.move(location.name),
         };
         return result;
     };
@@ -155,15 +141,23 @@ const createItemActionFactory = ({ actions, game, }) => {
     return (state) => {
         const result = [];
         for (const action of actions) {
-            if (state.hero.bag.includes(action.item))
+            if (state.hero.things.includes(action.name))
                 continue;
-            const { description, item } = action;
+            const { label: description, name: item } = action;
             result.push({
                 description,
-                callback: () => game.action.grab(item),
+                callback: () => game.verb.grab(item),
             });
         }
         return result;
     };
 };
-//# sourceMappingURL=location.js.map
+const actionLi = (action) => {
+    const button = document.createElement("button");
+    button.textContent = action.description;
+    button.onclick = () => action.callback();
+    const li = document.createElement("li");
+    li.appendChild(button);
+    return li;
+};
+//# sourceMappingURL=place.js.map

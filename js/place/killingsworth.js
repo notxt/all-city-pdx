@@ -1,30 +1,29 @@
 export const killingsworthConfig = {
     name: "Killingsworth",
-    regularThreshold: 2,
-    description: {
+    label: {
         "1 first time": "A quiet street a coffee shop on one side and wine bar down the block",
         "2 been there": "My 'hood",
     },
-    actions: {
-        item: [],
+    verb: {
+        grab: [],
         move: [
             {
-                description: "I guess it's time to get back home",
-                location: "Home Sweet Home",
+                label: "I guess it's time to get back home",
+                name: "Home Sweet Home",
             },
             {
-                description: {
+                label: {
                     "1 first time": "Been meaning to try that coffee shop",
                     "2 been there": "Could really use some caffeine right about now",
                 },
-                location: "Stacks Coffeehouse",
+                name: "Stacks Coffeehouse",
             },
             {
-                description: {
+                label: {
                     "1 first time": "That wine bar looks fun. Not too pretentious.",
                     "2 been there": "Never too early to grab a drink.",
                 },
-                location: "Gilded Raccoon",
+                name: "Gilded Raccoon",
             },
         ],
     },

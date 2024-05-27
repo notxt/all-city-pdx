@@ -1,26 +1,26 @@
 export const homeConfig = {
     name: "Home Sweet Home",
-    regularThreshold: 3,
-    description: {
+    label: {
         "1 first time": "Your cozy little corner of the world. The rent's a little steep but worth it.",
         "2 been there": "Back at home. Now what?",
     },
-    actions: {
-        item: [
+    verb: {
+        grab: [
             {
-                description: "Can't leave home without my King Sized Chisel Tip Sharpie",
-                item: "Sharpie",
+                label: "Can't leave home without my King Sized Chisel Tip Sharpie",
+                name: "Sharpie",
             },
         ],
         move: [
             {
-                description: {
+                label: {
                     "1 first time": "Time to go explore.",
                     "2 been there": "Wonder what's going on outside",
                 },
-                location: "Killingsworth",
+                name: "Killingsworth",
             },
         ],
+        tag: [],
     },
 };
 //# sourceMappingURL=home.js.map

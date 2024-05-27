@@ -1,31 +1,47 @@
 export const createGame = () => {
     const hero = {
-        location: "Home Sweet Home",
-        visited: {
-            "Gilded Raccoon": 0,
-            "Home Sweet Home": 0,
-            "Stacks Coffeehouse": 0,
-            Killingsworth: 0,
+        placeAt: "Home Sweet Home",
+        place: {
+            "Gilded Raccoon": { tag: false, visited: false },
+            "Home Sweet Home": { tag: false, visited: false },
+            "Stacks Coffeehouse": { tag: false, visited: false },
+            Killingsworth: { tag: false, visited: false },
         },
+        rep: 0,
+        skill: {
+            Sharpie: 0,
+        },
+        things: [],
     };
     const state = {
         hero,
     };
-    const moveWatchers = [];
-    const watchMove = (callback) => moveWatchers.push(callback);
+    const update = () => watchList.forEach((watcher) => watcher(state));
+    const grab = (item) => {
+        if (hero.things.includes(item))
+            return;
+        hero.things.push(item);
+        update();
+    };
     const move = (location) => {
-        hero.location = location;
-        hero.visited[location]++;
-        moveWatchers.forEach((watcher) => watcher(state));
+        hero.placeAt = location;
+        hero.place[location].visited = true;
+        update();
     };
-    const action = {
+    const tag = ({ place, marker }) => {
+        hero.place[place].tag = true;
+        hero.skill[marker]++;
+        update();
+    };
+    const watchList = [];
+    const watch = (callback) => watchList.push(callback);
+    const verb = {
+        grab,
         move,
-    };
-    const watch = {
-        move: watchMove,
+        tag,
     };
     const result = {
-        action,
+        verb,
         watch,
     };
     return result;

@@ -1,19 +1,18 @@
 export const gildedRaccoonConfig = {
     name: "Gilded Raccoon",
-    regularThreshold: 5,
-    description: {
+    label: {
         "1 first time": "Neon signs and taxidermy. This place is rad.",
         "2 been there": "Live music gets the creative juices flowing ... fermented grape juice doesn't hurt either.",
     },
-    actions: {
-        item: [],
+    verb: {
+        grab: [],
         move: [
             {
-                description: {
+                label: {
                     "1 first time": "Back into the rain",
                     "2 been there": "Back into the rain",
                 },
-                location: "Killingsworth",
+                name: "Killingsworth",
             },
         ],
     },
